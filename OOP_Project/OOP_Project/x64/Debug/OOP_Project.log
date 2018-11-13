@@ -1,3 +1,5 @@
-﻿  stdafx.cpp
+﻿  world_objects.cpp
   OOP_Project.cpp
+  Создание кода...
+  LINK : не найден или не выполнена сборка C:\Users\TryLessFold\Simulation_Of_Life\OOP_Project\x64\Debug\OOP_Project.exe при последней инкрементной компоновке; выполняется полная компоновка
   OOP_Project.vcxproj -> C:\Users\TryLessFold\Simulation_Of_Life\OOP_Project\x64\Debug\OOP_Project.exe
