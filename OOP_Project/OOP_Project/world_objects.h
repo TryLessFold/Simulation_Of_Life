@@ -7,13 +7,12 @@ using namespace sf;
 class object
 {
 private:
-	int type;
+	int id;
 	int x;
-	int s_x;
+	int sq_x;
 	int y;
-	int s_y;
+	int sq_y;
 	int weigth;
-	int food_value;
 	Texture texture;
 	Sprite sprite;
 protected:
@@ -25,6 +24,10 @@ protected:
 public:
 	virtual ~object() = 0
 	{
+	}
+	int ID()
+	{
+		return id;
 	}
 };
 
@@ -38,12 +41,17 @@ public:
 class stone : public nonOrg
 {
 
-};
+};  //2
 
 class village : public nonOrg
 {
 
 };
+
+class water : public nonOrg
+{
+
+}; //1
 
 class flora : public object
 {
@@ -56,12 +64,12 @@ public:
 class tree : public flora
 {
 
-};
+}; //3
 
 class berry : public flora
 {
 
-};
+}; //4
 
 class fauna : public object
 {
@@ -75,15 +83,14 @@ public:
 class human : public fauna
 {
 
-};
+}; 
 
 class beast : public fauna //It's dangerous animal: tiger, bear
-
 {
 
-};
+}; //3, 4, 5
 
 class animal : public fauna //It's friendly animal: rabbit, deer
 {
 
-};
+}; //5, 6, 7
