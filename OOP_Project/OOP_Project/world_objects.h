@@ -246,35 +246,60 @@ public:
 
 class object
 {
-private:
+protected:
 	int id;
 	int x;
 	int sq_x;
 	int y;
 	int sq_y;
-	int weigth;
 	Texture texture;
 	Sprite sprite;
-protected:
-	virtual void a() = 0;
-	Sprite *getSprite()
-	{
-		return &sprite;
-	}
+	inventory* head;
 public:
+	object() {}
 	virtual ~object() = 0
 	{
+	}
+	Sprite getSprite()
+	{
+		return sprite;
 	}
 	int ID()
 	{
 		return id;
 	}
+	int reload()
+	{
+		sprite.setPosition(x, y);
+	}
 };
 
 class stone : public object
 {
-	
-};  //2
+private:
+	static int i;
+public:
+	static int getI()
+	{
+		return i;
+	}
+	stone() {}
+	stone(int xe, int ye, int xe_s, int ye_s)
+	{
+		++i;
+		id = 2;
+		x = xe;
+		y = ye;
+		sq_x = xe_s;
+		sq_y = ye_s;
+		Image image;
+		image.loadFromFile("texture/2.png");
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+};  
 
 class village : public object
 {
@@ -283,7 +308,29 @@ class village : public object
 
 class water : public object
 {
-
+private:
+	static int i;
+public:
+	static int getI()
+	{
+		return i;
+	}
+	water() {}
+	water(int xe, int ye, int xe_s, int ye_s)
+	{
+		++i;
+		id = 1;
+		x = xe;
+		y = ye;
+		sq_x = xe_s;
+		sq_y = ye_s;
+		Image image;
+		image.loadFromFile("texture/1.png");
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
 }; //1
 
 class flora : public object
