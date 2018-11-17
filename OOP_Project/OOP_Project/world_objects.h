@@ -423,18 +423,11 @@ private:
 	int step_x;
 	int step_y;
 protected:
+	string pol;
 public:
 };
 
 class human : public fauna
-{
-private:
-protected:
-	virtual void f() = 0;
-public:
-};
-
-class man : public human
 {
 private:
 	static int i;
@@ -443,8 +436,8 @@ public:
 	{
 		return i;
 	}
-	man() {}
-	man(int xe, int ye, int xe_s, int ye_s)
+	human() {}
+	human(int xe, int ye, int xe_s, int ye_s, string p)
 	{
 		++i;
 		id = 13;
@@ -452,8 +445,9 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
+		pol = p;
 		Image image;
-		image.loadFromFile("texture/13.png");
+		image.loadFromFile("texture/" + pol + ".png");
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
@@ -461,7 +455,7 @@ public:
 	}
 }; 
 
-class woman : public human
+class beast : public fauna //It's dangerous animal: tiger, bear
 {
 private:
 	static int i;
@@ -470,43 +464,8 @@ public:
 	{
 		return i;
 	}
-	woman() {}
-	woman(int xe, int ye, int xe_s, int ye_s)
-	{
-		++i;
-		id = 12;
-		x = xe;
-		y = ye;
-		sq_x = xe_s;
-		sq_y = ye_s;
-		Image image;
-		image.loadFromFile("texture/12.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
-		sprite.setPosition(x, y);
-	}
-};
-
-class wildbeast : public fauna //It's dangerous animal: tiger, bear
-{
-private:
-protected:
-	virtual void f() = 0;
-public:
-};
-
-class bear : public wildbeast
-{
-private:
-	static int i;
-public:
-	static int getI()
-	{
-		return i;
-	}
-	bear() {}
-	bear(int xe, int ye, int xe_s, int ye_s)
+	beast() {}
+	beast(int xe, int ye, int xe_s, int ye_s)
 	{
 		++i;
 		id = 9;
@@ -523,7 +482,7 @@ public:
 	}
 };
 
-class wolf : public wildbeast
+class animal : public fauna //It's friendly animal: rabbit, deer
 {
 private:
 	static int i;
@@ -532,106 +491,17 @@ public:
 	{
 		return i;
 	}
-	wolf() {}
-	wolf(int xe, int ye, int xe_s, int ye_s)
+	animal() {}
+	animal(int xe, int ye, int xe_s, int ye_s)
 	{
 		++i;
-		id = 6;
+		id = 9;
 		x = xe;
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
 		Image image;
-		image.loadFromFile("texture/6.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
-		sprite.setPosition(x, y);
-	}
-};
-
-class homeanimal : public fauna //It's friendly animal: rabbit, deer
-{
-private:
-protected:
-	virtual void f() = 0;
-public:
-};
-
-class deer : public homeanimal
-{
-private:
-	static int i;
-public:
-	static int getI()
-	{
-		return i;
-	}
-	deer() {}
-	deer(int xe, int ye, int xe_s, int ye_s)
-	{
-		++i;
-		id = 8;
-		x = xe;
-		y = ye;
-		sq_x = xe_s;
-		sq_y = ye_s;
-		Image image;
-		image.loadFromFile("texture/8.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
-		sprite.setPosition(x, y);
-	}
-};
-
-class cat : public homeanimal
-{
-private:
-	static int i;
-public:
-	static int getI()
-	{
-		return i;
-	}
-	cat() {}
-	cat(int xe, int ye, int xe_s, int ye_s)
-	{
-		++i;
-		id = 10;
-		x = xe;
-		y = ye;
-		sq_x = xe_s;
-		sq_y = ye_s;
-		Image image;
-		image.loadFromFile("texture/10.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
-		sprite.setPosition(x, y);
-	}
-};
-
-class mouse : public homeanimal
-{
-private:
-	static int i;
-public:
-	static int getI()
-	{
-		return i;
-	}
-	mouse() {}
-	mouse(int xe, int ye, int xe_s, int ye_s)
-	{
-		++i;
-		id = 7;
-		x = xe;
-		y = ye;
-		sq_x = xe_s;
-		sq_y = ye_s;
-		Image image;
-		image.loadFromFile("texture/7.png");
+		image.loadFromFile("texture/11.png");
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
