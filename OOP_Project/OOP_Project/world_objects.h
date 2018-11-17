@@ -423,7 +423,7 @@ private:
 	int step_x;
 	int step_y;
 protected:
-	string pol;
+	int sex;
 public:
 };
 
@@ -437,7 +437,7 @@ public:
 		return i;
 	}
 	human() {}
-	human(int xe, int ye, int xe_s, int ye_s, string p)
+	human(int xe, int ye, int xe_s, int ye_s, int p)
 	{
 		++i;
 		id = 13;
@@ -445,9 +445,12 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
-		pol = p;
+		sex = p;
 		Image image;
-		image.loadFromFile("texture/" + pol + ".png");
+		if(sex == 0)
+		image.loadFromFile("texture/12.png");
+		else if(sex == 1)
+		image.loadFromFile("texture/13.png");
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
@@ -465,7 +468,7 @@ public:
 		return i;
 	}
 	beast() {}
-	beast(int xe, int ye, int xe_s, int ye_s)
+	beast(int xe, int ye, int xe_s, int ye_s, int p)
 	{
 		++i;
 		id = 9;
@@ -473,6 +476,7 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
+		sex = p;
 		Image image;
 		image.loadFromFile("texture/9.png");
 		texture.loadFromImage(image);
@@ -492,7 +496,7 @@ public:
 		return i;
 	}
 	animal() {}
-	animal(int xe, int ye, int xe_s, int ye_s)
+	animal(int xe, int ye, int xe_s, int ye_s, int p)
 	{
 		++i;
 		id = 9;
@@ -500,6 +504,7 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
+		sex = p;
 		Image image;
 		image.loadFromFile("texture/11.png");
 		texture.loadFromImage(image);
