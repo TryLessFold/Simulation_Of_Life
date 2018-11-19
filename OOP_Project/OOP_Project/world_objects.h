@@ -372,6 +372,8 @@ public:
 	{
 		return i;
 	}
+	void f()
+	{}
 	tree() {}
 	tree(int xe, int ye, int xe_s, int ye_s)
 	{
@@ -461,32 +463,12 @@ public:
 class beast : public fauna //It's dangerous animal: tiger, bear
 {
 private:
-	static int i;
+protected:
+	virtual void f() = 0;
 public:
-	static int getI()
-	{
-		return i;
-	}
-	beast() {}
-	beast(int xe, int ye, int xe_s, int ye_s, int p)
-	{
-		++i;
-		id = 9;
-		x = xe;
-		y = ye;
-		sq_x = xe_s;
-		sq_y = ye_s;
-		sex = p;
-		Image image;
-		image.loadFromFile("texture/9.png");
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
-		sprite.setPosition(x, y);
-	}
 };
 
-class animal : public fauna //It's friendly animal: rabbit, deer
+class bear : public beast 
 {
 private:
 	static int i;
@@ -495,8 +477,8 @@ public:
 	{
 		return i;
 	}
-	animal() {}
-	animal(int xe, int ye, int xe_s, int ye_s, int p)
+	bear() {}
+	bear(int xe, int ye, int xe_s, int ye_s)
 	{
 		++i;
 		id = 9;
@@ -504,12 +486,137 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
-		sex = p;
 		Image image;
-		image.loadFromFile("texture/11.png");
+		image.loadFromFile("texture/9.png");
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
 	}
+	void f()
+	{}
+};
+
+class wolf : public beast
+{
+private:
+	static int i;
+public:
+	static int getI()
+	{
+		return i;
+	}
+	wolf() {}
+	wolf(int xe, int ye, int xe_s, int ye_s)
+	{
+		++i;
+		id = 9;
+		x = xe;
+		y = ye;
+		sq_x = xe_s;
+		sq_y = ye_s;
+		Image image;
+		image.loadFromFile("texture/6.png");
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+	void f()
+	{}
+};
+
+class animal : public fauna //It's dangerous animal: tiger, bear
+{
+private:
+protected:
+	virtual void f() = 0;
+public:
+};
+
+class mouse : public animal //It's friendly animal: rabbit, deer
+{
+private:
+	static int i;
+public:
+	static int getI()
+	{
+		return i;
+	}
+	mouse() {}
+	mouse(int xe, int ye, int xe_s, int ye_s)
+	{
+		++i;
+		id = 9;
+		x = xe;
+		y = ye;
+		sq_x = xe_s;
+		sq_y = ye_s;
+		Image image;
+		image.loadFromFile("texture/7.png");
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+	void f()
+	{}
+};
+
+class deer : public animal //It's friendly animal: rabbit, deer
+{
+private:
+	static int i;
+public:
+	static int getI()
+	{
+		return i;
+	}
+	deer() {}
+	deer(int xe, int ye, int xe_s, int ye_s)
+	{
+		++i;
+		id = 9;
+		x = xe;
+		y = ye;
+		sq_x = xe_s;
+		sq_y = ye_s;
+		Image image;
+		image.loadFromFile("texture/8.png");
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+	void f()
+	{}
+};
+
+class cat : public animal //It's friendly animal: rabbit, deer
+{
+private:
+	static int i;
+public:
+	static int getI()
+	{
+		return i;
+	}
+	cat() {}
+	cat(int xe, int ye, int xe_s, int ye_s)
+	{
+		++i;
+		id = 9;
+		x = xe;
+		y = ye;
+		sq_x = xe_s;
+		sq_y = ye_s;
+		Image image;
+		image.loadFromFile("texture/10.png");
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+	void f()
+	{}
 };
