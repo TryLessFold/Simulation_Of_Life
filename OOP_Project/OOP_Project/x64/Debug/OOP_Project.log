@@ -1,17 +1,23 @@
 ﻿  OOP_Project.cpp
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(106): warning C4101: i: неиспользованная локальная переменная
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(197): warning C4101: i: неиспользованная локальная переменная
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(273): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(300): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(327): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(354): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(391): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(418): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(459): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(494): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(523): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(560): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(589): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\world_objects.h(618): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-c:\users\ilja-\simulation_of_life\oop_project\oop_project\oop_project.cpp(66): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
-  OOP_Project.vcxproj -> C:\Users\ilja-\Simulation_Of_Life\OOP_Project\x64\Debug\OOP_Project.exe
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(106): warning C4101: i: неиспользованная локальная переменная
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(197): warning C4101: i: неиспользованная локальная переменная
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(297): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(298): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(324): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(325): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(355): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(356): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(418): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(419): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(428): warning C4305: =: усечение из "double" в "float"
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(429): warning C4305: =: усечение из "double" в "float"
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(456): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(457): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(466): warning C4305: =: усечение из "double" в "float"
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(467): warning C4305: =: усечение из "double" в "float"
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(494): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(495): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(504): warning C4305: =: усечение из "double" в "float"
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\world_objects.h(505): warning C4305: =: усечение из "double" в "float"
+c:\users\trylessfold\simulation_of_life\oop_project\oop_project\oop_project.cpp(50): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+  OOP_Project.vcxproj -> C:\Users\TryLessFold\Simulation_Of_Life\OOP_Project\x64\Debug\OOP_Project.exe
