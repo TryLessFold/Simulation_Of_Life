@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "map.h"
 
 using namespace std;
 using namespace sf;
@@ -252,6 +253,8 @@ protected:
 	int sq_x;
 	float y;
 	int sq_y;
+	int rad_x;
+	int rad_y;
 	Texture texture;
 	Sprite sprite;
 	inventory* Inv;
@@ -262,6 +265,8 @@ public:
 		Inv->DeleteList();
 		delete Inv;
 	}
+	virtual void f() = 0
+	{}
 	Sprite getSprite()
 	{
 		return sprite;
@@ -270,7 +275,7 @@ public:
 	{
 		return id;
 	}
-	int reload()
+	void reload()
 	{
 		sprite.setPosition(x, y);
 	}
@@ -278,6 +283,11 @@ public:
 	{
 		return Inv;
 	}
+	int Radius()
+	{
+		return rad_x;
+	}
+
 };
 
 class nonOrg : public object
@@ -305,6 +315,8 @@ public:
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
 	}
+	void f()
+	{}
 };  
 
 class village : public object
@@ -332,6 +344,8 @@ public:
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
 	}
+	void f()
+	{}
 };
 
 class flora : public object
@@ -356,6 +370,8 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
+		rad_x = x;
+		rad_y = y;
 		lvl_gr = 0;
 		Image image;
 		image.loadFromFile(s[0]);
@@ -364,6 +380,8 @@ public:
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
 	}
+	void f()
+	{}
 };
 
 class fauna : public object
@@ -377,11 +395,13 @@ protected:
 	float step_y;
 	int sex;
 	listc* ration;
+public:
 	bool isAttack;
 	bool isMove;
 	bool isNon;
 	bool isFear;
-public:
+	void f()
+	{}
 	void changeStep(float step)
 	{
 		step_x = step;
@@ -393,9 +413,8 @@ public:
 		to_y = t_y;
 		isMove = 1;
 	}
-	virtual void Move(float time)
+	virtual void Move(float time) = 0
 	{
-		
 	}
 };
 
@@ -418,6 +437,8 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
+		rad_x = x;
+		rad_y = y;
 		sex = p;
 		Image image;
 		isAttack = 0;
@@ -434,6 +455,25 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
+	}
+	virtual void goTO(int t_x, int t_y)
+	{
+		to_x = t_x;
+		to_y = t_y;
+		isMove = 1;
+	}
+	virtual void Move(float time)
+	{
+		if (sex == 0)
+		{
+			y += step_y  * time;
+			x += (step_x * 10) * time ;
+		}
+		else
+		{
+			y += step_y * time;
+			x += (step_x * 15) * time;
+		}
 	}
 }; 
 
@@ -456,6 +496,8 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
+		rad_x = x;
+		rad_y = y;
 		sex = p;
 		Image image;
 		isAttack = 0;
@@ -473,19 +515,33 @@ public:
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
 	}
+	virtual void Move(float time)
+	{
+		if (sex == 0)
+		{
+			y += step_y * time;
+			x += (step_x * 20) * time;
+		}
+		else
+		{
+			y += step_y * time;
+			x += (step_x * 35) * time;
+		}
+	}
 };
 
 class animal : public fauna //It's dangerous animal: tiger, bear
 {
 private:
 	static int i;
+	int skin;
 protected:
 public:
 	static int getI()
 	{
 		return i;
 	}
-	animal(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	animal(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p, int sk)
 	{
 		++i;
 		id = ID;
@@ -494,7 +550,10 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
+		rad_x = x;
+		rad_y = y;
 		sex = p;
+		skin = sk;
 		Image image;
 		isAttack = 0;
 		isMove = 0;
@@ -504,8 +563,15 @@ public:
 		step_y = 0.1;
 		if (sex == 0)
 			image.loadFromFile(s[0]);
-		else
+		else if(sex == 1)
 			image.loadFromFile(s[1]);
+		else
+		{
+			if (skin == 0)
+				image.loadFromFile(s[2]);
+			else
+				image.loadFromFile(s[3]);
+		}
 		isAttack = 0;
 		isMove = 0;
 		isNon = 1;
@@ -514,9 +580,24 @@ public:
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
 	}
+	virtual void Move(float time)
+	{
+		if (sex == 0)
+		{
+			y += step_y * time;
+			x += (step_x * 5) * time;
+		}
+		else
+		{
+			y += step_y * time;
+			x += (step_x * 10) * time;
+		}
+	}
 };
 
 int flora::i = -1;
 int nonOrg::i = -1;
 int human::i = -1;
 int village::i = -1;
+int beast::i = -1;
+int animal::i = -1;
