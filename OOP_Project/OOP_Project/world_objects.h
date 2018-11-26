@@ -1,7 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "map.h"
-
+#include "time.h"
+//#include "stdlib.h"
 using namespace std;
 using namespace sf;
 
@@ -253,12 +254,12 @@ protected:
 	int sq_y;
 	int rad_x;
 	int rad_y;
+	double x;
+	double y;
 	Texture texture;
 	Sprite sprite;
 	inventory* Inv;
 public:
-	float x;
-	float y;
 	object() {}
 	virtual ~object()
 	{
@@ -417,12 +418,35 @@ public:
 	}
 	virtual void goTO(int t_x, int t_y)
 	{
-		to_x = t_x;
-		to_y = t_y;
+		to_x = (t_x/20)*20;
+		cout << to_x << endl;
+		to_y = (t_y/20)*20;
 		isMove = 1;
 	}
-	virtual void Move(float time) = 0
+	virtual void Move(float time1)
 	{
+		double distance;
+		if (isMove)
+		{
+			distance = sqrt((to_x - x)*(to_x - x) + (to_y - y)*(to_y - y));
+			if (distance > 2)
+			{
+				x += step_x*time1*(to_x - x) / distance;
+				y += step_y*time1*(to_y - y) / distance;
+			}
+			else
+			{
+				x = to_x;
+				y = to_y;
+				isMove = 0;
+				srand(time(NULL));
+				cout << "x = " << x << " ";
+				int ranx, rany;
+				ranx = (x-40) + rand() % 100;
+				rany = (y-40) + rand() % 100;
+				if (isNon) goTO(ranx, rany);
+			}
+		}
 	}
 };
 
@@ -454,8 +478,8 @@ public:
 		isSelect = 0;
 		isNon = 1;
 		isFear = 0;
-		step_x = 0.1;
-		step_y = 0.1;
+		step_x = 0.04;
+		step_y = 0.04;
 		if (sex == 0)
 			image.loadFromFile(s[0]);
 		else
@@ -464,25 +488,6 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
-	}
-	virtual void goTO(int t_x, int t_y)
-	{
-		to_x = t_x;
-		to_y = t_y;
-		isMove = 1;
-	}
-	virtual void Move(float time)
-	{
-		if (sex == 0)
-		{
-			y += step_y  * time;
-			x += (step_x * 10) * time ;
-		}
-		else
-		{
-			y += step_y * time;
-			x += (step_x * 15) * time;
-		}
 	}
 }; 
 
@@ -523,19 +528,6 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
-	}
-	virtual void Move(float time)
-	{
-		if (sex == 0)
-		{
-			y += step_y * time;
-			x += (step_x * 20) * time;
-		}
-		else
-		{
-			y += step_y * time;
-			x += (step_x * 35) * time;
-		}
 	}
 };
 
@@ -588,19 +580,6 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
-	}
-	virtual void Move(float time)
-	{
-		if (sex == 0)
-		{
-			y += step_y * time;
-			x += (step_x * 5) * time;
-		}
-		else
-		{
-			y += step_y * time;
-			x += (step_x * 10) * time;
-		}
 	}
 };
 
