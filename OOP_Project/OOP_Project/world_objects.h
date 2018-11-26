@@ -249,9 +249,7 @@ class object
 {
 protected:
 	int id;
-	float x;
 	int sq_x;
-	float y;
 	int sq_y;
 	int rad_x;
 	int rad_y;
@@ -259,6 +257,8 @@ protected:
 	Sprite sprite;
 	inventory* Inv;
 public:
+	float x;
+	float y;
 	object() {}
 	virtual ~object()
 	{
@@ -287,7 +287,14 @@ public:
 	{
 		return rad_x;
 	}
-
+	float retX()
+	{
+		return x;
+	}
+	float retY()
+	{
+		return y;
+	}
 };
 
 class nonOrg : public object
@@ -400,6 +407,7 @@ public:
 	bool isMove;
 	bool isNon;
 	bool isFear;
+	bool isSelect;
 	void f()
 	{}
 	void changeStep(float step)
@@ -443,6 +451,7 @@ public:
 		Image image;
 		isAttack = 0;
 		isMove = 0;
+		isSelect = 0;
 		isNon = 1;
 		isFear = 0;
 		step_x = 0.1;
