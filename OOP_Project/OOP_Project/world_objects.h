@@ -1,21 +1,41 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "map.h"
-#include "time.h"
 //#include "stdlib.h"
 using namespace std;
 using namespace sf;
 
-struct list
+class SupportClass
 {
-	int id;
-	int weigth;
-	int value;
-	list* next;
-	list* prev;
+protected:
+	int ScreenHeight;
+	int ScreenWeight;
+	struct list
+	{
+		int id;
+		int weigth;
+		int value;
+		list* next;
+		list* prev;
+	};
+public:
+	virtual void f() = 0;
+	void SetScreen(int s_h, int s_w)
+	{
+		ScreenHeight = s_h;
+		ScreenWeight = s_w;
+	}
+	int retSH()
+	{
+		return ScreenHeight;
+	}
+	int retSW()
+	{
+		return ScreenWeight;
+	}
 };
 
-class listc
+class listc : public SupportClass
 {
 protected:
 	list *head, *tail;
@@ -246,7 +266,7 @@ public:
 	}
 };
 
-class object
+class object : public SupportClass
 {
 protected:
 	int id;
@@ -266,8 +286,7 @@ public:
 		Inv->DeleteList();
 		delete Inv;
 	}
-	virtual void f() = 0
-	{}
+	virtual void f() = 0;
 	Sprite getSprite()
 	{
 		return sprite;
@@ -401,16 +420,17 @@ protected:
 	int to_y;
 	float step_x;
 	float step_y;
+	int ranx;
+	int rany;
 	int sex;
-	listc* ration;
-public:
 	bool isAttack;
 	bool isMove;
 	bool isNon;
 	bool isFear;
 	bool isSelect;
-	void f()
-	{}
+	listc* ration;
+public:
+	virtual void f() = 0;
 	void changeStep(float step)
 	{
 		step_x = step;
@@ -418,9 +438,9 @@ public:
 	}
 	virtual void goTO(int t_x, int t_y)
 	{
-		to_x = (t_x/20)*20;
+		to_x = (t_x / 20) * 20;
 		cout << to_x << endl;
-		to_y = (t_y/20)*20;
+		to_y = (t_y / 20) * 20;
 		isMove = 1;
 	}
 	virtual void Move(float time1)
@@ -431,22 +451,36 @@ public:
 			distance = sqrt((to_x - x)*(to_x - x) + (to_y - y)*(to_y - y));
 			if (distance > 2)
 			{
-				x += step_x*time1*(to_x - x) / distance;
-				y += step_y*time1*(to_y - y) / distance;
+				x += step_x * time1*(to_x - x) / distance;
+				y += step_y * time1*(to_y - y) / distance;
 			}
 			else
 			{
 				x = to_x;
 				y = to_y;
 				isMove = 0;
-				srand(time(NULL));
 				cout << "x = " << x << " ";
-				int ranx, rany;
-				ranx = (x-40) + rand() % 100;
-				rany = (y-40) + rand() % 100;
+				ranx = (x - 40) + rand() % 100;
+				rany = (y - 40) + rand() % 100;
 				if (isNon) goTO(ranx, rany);
 			}
 		}
+	}
+	bool ismove()
+	{
+		return isMove;
+	}
+	void ismove(bool x)
+	{
+		isMove = x;
+	}
+	bool isselect()
+	{
+		return isSelect;
+	}
+	void isselect(bool x)
+	{
+		isSelect = x;
 	}
 };
 
@@ -489,6 +523,8 @@ public:
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
 	}
+	void f()
+	{}
 }; 
 
 class beast : public fauna 
@@ -529,6 +565,8 @@ public:
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
 	}
+	void f()
+	{}
 };
 
 class animal : public fauna //It's dangerous animal: tiger, bear
@@ -581,6 +619,8 @@ public:
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
 	}
+	void f()
+	{}
 };
 
 int flora::i = -1;
