@@ -1,15 +1,16 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "map.h"
-//#include "stdlib.h"
+
 using namespace std;
 using namespace sf;
 
 class SupportClass
 {
 protected:
-	int ScreenHeight;
-	int ScreenWeight;
+	static int ScreenHeigth;
+	static int ScreenWidth;
+	float const_timer_step;
 	struct list
 	{
 		int id;
@@ -20,18 +21,18 @@ protected:
 	};
 public:
 	virtual void f() = 0;
-	void SetScreen(int s_h, int s_w)
+	static void SetScreen(int s_h=720, int s_w=1280)
 	{
-		ScreenHeight = s_h;
-		ScreenWeight = s_w;
+		int ScreenHeigth = s_h;
+		int ScreenWidth = s_w;
 	}
 	int retSH()
 	{
-		return ScreenHeight;
+		return ScreenHeigth;
 	}
 	int retSW()
 	{
-		return ScreenWeight;
+		return ScreenWidth;
 	}
 };
 
@@ -420,8 +421,6 @@ protected:
 	int to_y;
 	float step_x;
 	float step_y;
-	int ranx;
-	int rany;
 	int sex;
 	bool isAttack;
 	bool isMove;
@@ -429,8 +428,13 @@ protected:
 	bool isFear;
 	bool isSelect;
 	listc* ration;
+	float timer_step;
 public:
 	virtual void f() = 0;
+	fauna() : timer_step(0)
+	{
+		const_timer_step = 1000 + rand() % 2000;
+	}
 	void changeStep(float step)
 	{
 		step_x = step;
@@ -446,13 +450,17 @@ public:
 	virtual void Move(float time1)
 	{
 		double distance;
-		if (isMove)
+		if ((isMove)&&(timer_step>const_timer_step))
 		{
 			distance = sqrt((to_x - x)*(to_x - x) + (to_y - y)*(to_y - y));
-			if (distance > 2)
+			if ((distance > 2)&&(timer_step>const_timer_step))
 			{
 				x += step_x * time1*(to_x - x) / distance;
 				y += step_y * time1*(to_y - y) / distance;
+			}
+			else if (timer_step <= const_timer_step)
+			{
+				timer_step += time1;
 			}
 			else
 			{
@@ -460,10 +468,20 @@ public:
 				y = to_y;
 				isMove = 0;
 				cout << "x = " << x << " ";
-				ranx = (x - 40) + rand() % 100;
-				rany = (y - 40) + rand() % 100;
-				if (isNon) goTO(ranx, rany);
+				if (isNon)
+				{
+					int ranx = (x - 40) + rand() % 100;
+					int rany = (y - 40) + rand() % 100;
+					goTO(ranx, rany);
+					timer_step = 0;
+					const_timer_step = 1000 + rand() % 2000;
+					cout << "x = " << const_timer_step << " ";
+				}
 			}
+		}
+		else
+		{
+			timer_step += time1;
 		}
 	}
 	bool ismove()
@@ -508,7 +526,7 @@ public:
 		sex = p;
 		Image image;
 		isAttack = 0;
-		isMove = 0;
+		isMove = 1;
 		isSelect = 0;
 		isNon = 1;
 		isFear = 0;
@@ -522,6 +540,9 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
+		int ranx = (x - 40) + rand() % 100;
+		int rany = (y - 40) + rand() % 100;
+		goTO(ranx, rany);
 	}
 	void f()
 	{}
@@ -551,11 +572,11 @@ public:
 		sex = p;
 		Image image;
 		isAttack = 0;
-		isMove = 0;
+		isMove = 1;
 		isNon = 1;
 		isFear = 0;
-		step_x = 0.1;
-		step_y = 0.1;
+		step_x = 0.05;
+		step_y = 0.05;
 		if (sex == 0)
 			image.loadFromFile(s[0]);
 		else
@@ -564,6 +585,9 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
+		int ranx = (x - 40) + rand() % 100;
+		int rany = (y - 40) + rand() % 100;
+		goTO(ranx, rany);
 	}
 	void f()
 	{}
@@ -598,8 +622,8 @@ public:
 		isMove = 0;
 		isNon = 1;
 		isFear = 0;
-		step_x = 0.1;
-		step_y = 0.1;
+		step_x = 0.05;
+		step_y = 0.05;
 		if (sex == 0)
 			image.loadFromFile(s[0]);
 		else if(sex == 1)
@@ -618,6 +642,9 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
+		int ranx = (x - 40) + rand() % 100;
+		int rany = (y - 40) + rand() % 100;
+		goTO(ranx, rany);
 	}
 	void f()
 	{}
