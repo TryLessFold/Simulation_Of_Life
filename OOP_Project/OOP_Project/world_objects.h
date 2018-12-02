@@ -1,16 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "map.h"
+#include "sstream"
 
 using namespace std;
 using namespace sf;
 
-class SupportClass
+class listc
 {
+private: 
 protected:
-	static int ScreenHeigth;
-	static int ScreenWidth;
-	float const_timer_step;
 	struct list
 	{
 		int id;
@@ -19,26 +18,6 @@ protected:
 		list* next;
 		list* prev;
 	};
-public:
-	virtual void f() = 0;
-	static void SetScreen(int s_h=720, int s_w=1280)
-	{
-		int ScreenHeigth = s_h;
-		int ScreenWidth = s_w;
-	}
-	int retSH()
-	{
-		return ScreenHeigth;
-	}
-	int retSW()
-	{
-		return ScreenWidth;
-	}
-};
-
-class listc : public SupportClass
-{
-protected:
 	list *head, *tail;
 	int length;
 public:
@@ -77,7 +56,7 @@ public:
 	{
 		return tail;
 	}
-	virtual void push(int i, int v, int w=0)
+	virtual void push(int i, int v = 0 , int w = 0)
 	{
 		length++;
 		if (head == NULL)
@@ -266,6 +245,32 @@ public:
 		else return 0;
 	}
 };
+class SupportClass
+{
+protected:
+	static int ScreenHeigth;
+	static int ScreenWidth;
+	static listc NonGo;
+	float const_timer_step;
+public:
+	static void push_NonGo(int i)
+	{
+		NonGo.push(i);
+	}
+	static void SetScreen(int s_h = 720, int s_w = 1280)
+	{
+		ScreenHeigth = s_h;
+		ScreenWidth = s_w;
+	}
+	int retSH()
+	{
+		return ScreenHeigth;
+	}
+	int retSW()
+	{
+		return ScreenWidth;
+	}
+};
 
 class object : public SupportClass
 {
@@ -279,13 +284,12 @@ protected:
 	double y;
 	Texture texture;
 	Sprite sprite;
-	inventory* Inv;
+	inventory Inv;
 public:
 	object() {}
 	virtual ~object()
 	{
-		Inv->DeleteList();
-		delete Inv;
+		Inv.DeleteList();
 	}
 	virtual void f() = 0;
 	Sprite getSprite()
@@ -300,7 +304,7 @@ public:
 	{
 		sprite.setPosition(x, y);
 	}
-	inventory* inv()
+	inventory inv()
 	{
 		return Inv;
 	}
@@ -427,7 +431,6 @@ protected:
 	bool isNon;
 	bool isFear;
 	bool isSelect;
-	listc* ration;
 	float timer_step;
 public:
 	virtual void f() = 0;
@@ -440,10 +443,13 @@ public:
 		step_x = step;
 		step_y = step;
 	}
-	virtual void goTO(int t_x, int t_y)
+	virtual void goTO(int t_x, int t_y, int s_x, int s_y)
 	{
+		//cout << retSW() << " " << t_x << endl;
+		while((t_x<0)||(t_x+s_x>retSH())) t_x = (x - 40) + rand() % 100;
 		to_x = (t_x / 20) * 20;
-		cout << to_x << endl;
+		//cout << retSH() << " " << t_y << endl;
+		while ((t_y<0) || (t_y+s_y>retSW())) t_y = (y - 40) + rand() % 100;
 		to_y = (t_y / 20) * 20;
 		isMove = 1;
 	}
@@ -455,8 +461,25 @@ public:
 			distance = sqrt((to_x - x)*(to_x - x) + (to_y - y)*(to_y - y));
 			if ((distance > 2)&&(timer_step>const_timer_step))
 			{
+				int ox = x/20 , oy = y/20;
+				Objects[oy][ox] = id;
 				x += step_x * time1*(to_x - x) / distance;
 				y += step_y * time1*(to_y - y) / distance;
+				int xx = x / 20, yy = y / 20;
+				int sxx = (x + sq_x) / 20; int syy = (y + sq_y) / 20;
+				if (NonGo.search(TileMap[yy][xx])|| NonGo.search(TileMap[syy][sxx]))
+				{
+					x -= step_x * time1*(to_x - x) / distance;
+					y -= step_y * time1*(to_y - y) / distance;
+					int ranx = (x - 40) + rand() % 100;
+					int rany = (y - 40) + rand() % 100;
+					goTO(ranx, rany, sq_x, sq_y);
+				}
+				if ((x / 20) != ox || (y / 20) != oy)
+				{
+					char tmp = Objects[oy][ox];
+					Objects[oy][ox] = '0';
+				}
 			}
 			else if (timer_step <= const_timer_step)
 			{
@@ -467,15 +490,15 @@ public:
 				x = to_x;
 				y = to_y;
 				isMove = 0;
-				cout << "x = " << x << " ";
+				//cout << "x = " << x << " ";
 				if (isNon)
 				{
 					int ranx = (x - 40) + rand() % 100;
 					int rany = (y - 40) + rand() % 100;
-					goTO(ranx, rany);
+					goTO(ranx, rany, sq_x, sq_y);
 					timer_step = 0;
 					const_timer_step = 1000 + rand() % 2000;
-					cout << "x = " << const_timer_step << " ";
+					//cout << "x = " << const_timer_step << " ";
 				}
 			}
 		}
@@ -542,7 +565,7 @@ public:
 		sprite.setPosition(x, y);
 		int ranx = (x - 40) + rand() % 100;
 		int rany = (y - 40) + rand() % 100;
-		goTO(ranx, rany);
+		goTO(ranx, rany, sq_x, sq_y);
 	}
 	void f()
 	{}
@@ -587,7 +610,7 @@ public:
 		sprite.setPosition(x, y);
 		int ranx = (x - 40) + rand() % 100;
 		int rany = (y - 40) + rand() % 100;
-		goTO(ranx, rany);
+		goTO(ranx, rany, sq_x, sq_y);
 	}
 	void f()
 	{}
@@ -644,7 +667,7 @@ public:
 		sprite.setPosition(x, y);
 		int ranx = (x - 40) + rand() % 100;
 		int rany = (y - 40) + rand() % 100;
-		goTO(ranx, rany);
+		goTO(ranx, rany, sq_x, sq_y);
 	}
 	void f()
 	{}
@@ -656,3 +679,6 @@ int human::i = -1;
 int village::i = -1;
 int beast::i = -1;
 int animal::i = -1;
+listc SupportClass::NonGo;
+int SupportClass::ScreenHeigth = 720;
+int SupportClass::ScreenWidth = 1280;
