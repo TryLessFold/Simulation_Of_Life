@@ -252,6 +252,11 @@ protected:
 	static int ScreenWidth;
 	static listc NonGo;
 	float const_timer_step;
+	struct radius
+	{
+		int x;
+		int y;
+	}*rad;
 public:
 	static void push_NonGo(int i)
 	{
@@ -269,6 +274,16 @@ public:
 	int retSW()
 	{
 		return ScreenWidth;
+	}
+	radius setRad(int x, int y)
+	{
+		rad = new radius;
+		rad->x = x;
+		rad->y = y;
+	}
+	radius retRad()
+	{
+		return *this->rad;
 	}
 };
 
@@ -465,15 +480,22 @@ public:
 				Objects[oy][ox] = id;
 				x += step_x * time1*(to_x - x) / distance;
 				y += step_y * time1*(to_y - y) / distance;
-				int xx = x / 20, yy = y / 20;
-				int sxx = (x + sq_x) / 20; int syy = (y + sq_y) / 20;
+				int xx = x / 20;
+				int yy = y / 20;
+				int sxx = (x + sq_x) / 20; 
+				int syy = (y + sq_y) / 20;
 				if (NonGo.search(TileMap[yy][xx])|| NonGo.search(TileMap[syy][sxx]))
 				{
-					x -= step_x * time1*(to_x - x) / distance;
-					y -= step_y * time1*(to_y - y) / distance;
+					/*x += step_x * time1*(to_x - x) / distance;
+					y += step_y * time1*(to_y - y) / distance;
 					int ranx = (x - 40) + rand() % 100;
 					int rany = (y - 40) + rand() % 100;
-					goTO(ranx, rany, sq_x, sq_y);
+					goTO(ranx, rany, sq_x, sq_y);*/
+					changeStep(0.01);
+				}
+				else
+				{
+					changeStep(0.04);
 				}
 				if ((x / 20) != ox || (y / 20) != oy)
 				{
@@ -571,7 +593,7 @@ public:
 	{}
 }; 
 
-class beast : public fauna 
+class beast : public fauna
 {
 private:
 	static int i;
@@ -614,6 +636,67 @@ public:
 	}
 	void f()
 	{}
+	virtual void Move(float time1)
+	{
+		double distance;
+		if ((isMove) && (timer_step > const_timer_step))
+		{
+			distance = sqrt((to_x - x)*(to_x - x) + (to_y - y)*(to_y - y));
+			if ((distance > 2) && (timer_step > const_timer_step))
+			{
+				int ox = x / 20, oy = y / 20;
+				Objects[oy][ox] = id;
+				x += step_x * time1*(to_x - x) / distance;
+				y += step_y * time1*(to_y - y) / distance;
+				int xx = x / 20;
+				int yy = y / 20;
+				int sxx = (x + sq_x) / 20;
+				int syy = (y + sq_y) / 20;
+				if (NonGo.search(TileMap[yy][xx]) || NonGo.search(TileMap[syy][sxx]))
+				{
+					/*x += step_x * time1*(to_x - x) / distance;
+					y += step_y * time1*(to_y - y) / distance;
+					int ranx = (x - 40) + rand() % 100;
+					int rany = (y - 40) + rand() % 100;
+					goTO(ranx, rany, sq_x, sq_y);*/
+					changeStep(0.02);
+				}
+				else
+				{
+					changeStep(0.05);
+				}
+				if ((x / 20) != ox || (y / 20) != oy)
+				{
+					char tmp = Objects[oy][ox];
+					Objects[oy][ox] = '0';
+				}
+			}
+			else if (timer_step <= const_timer_step)
+			{
+				timer_step += time1;
+			}
+			else
+			{
+				x = to_x;
+				y = to_y;
+				isMove = 0;
+				//cout << "x = " << x << " ";
+				if (isNon)
+				{
+					int ranx = (x - 40) + rand() % 100;
+					int rany = (y - 40) + rand() % 100;
+					goTO(ranx, rany, sq_x, sq_y);
+					timer_step = 0;
+					const_timer_step = 1000 + rand() % 2000;
+					//cout << "x = " << const_timer_step << " ";
+				}
+			}
+		}
+		else
+		{
+			timer_step += time1;
+		}
+	}
 };
 
 class animal : public fauna //It's dangerous animal: tiger, bear
@@ -671,6 +754,67 @@ public:
 	}
 	void f()
 	{}
+	virtual void Move(float time1)
+	{
+		double distance;
+		if ((isMove) && (timer_step > const_timer_step))
+		{
+			distance = sqrt((to_x - x)*(to_x - x) + (to_y - y)*(to_y - y));
+			if ((distance > 2) && (timer_step > const_timer_step))
+			{
+				int ox = x / 20, oy = y / 20;
+				Objects[oy][ox] = id;
+				x += step_x * time1*(to_x - x) / distance;
+				y += step_y * time1*(to_y - y) / distance;
+				int xx = x / 20;
+				int yy = y / 20;
+				int sxx = (x + sq_x) / 20;
+				int syy = (y + sq_y) / 20;
+				if (NonGo.search(TileMap[yy][xx]) || NonGo.search(TileMap[syy][sxx]))
+				{
+					/*x += step_x * time1*(to_x - x) / distance;
+					y += step_y * time1*(to_y - y) / distance;
+					int ranx = (x - 40) + rand() % 100;
+					int rany = (y - 40) + rand() % 100;
+					goTO(ranx, rany, sq_x, sq_y);*/
+					changeStep(0.02);
+				}
+				else
+				{
+					changeStep(0.05);
+				}
+				if ((x / 20) != ox || (y / 20) != oy)
+				{
+					char tmp = Objects[oy][ox];
+					Objects[oy][ox] = '0';
+				}
+			}
+			else if (timer_step <= const_timer_step)
+			{
+				timer_step += time1;
+			}
+			else
+			{
+				x = to_x;
+				y = to_y;
+				isMove = 0;
+				//cout << "x = " << x << " ";
+				if (isNon)
+				{
+					int ranx = (x - 40) + rand() % 100;
+					int rany = (y - 40) + rand() % 100;
+					goTO(ranx, rany, sq_x, sq_y);
+					timer_step = 0;
+					const_timer_step = 1000 + rand() % 2000;
+					//cout << "x = " << const_timer_step << " ";
+				}
+			}
+		}
+		else
+		{
+			timer_step += time1;
+		}
+	}
 };
 
 int flora::i = -1;
