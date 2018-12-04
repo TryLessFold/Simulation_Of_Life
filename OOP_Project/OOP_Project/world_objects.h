@@ -3,6 +3,8 @@
 #include "map.h"
 #include "sstream"
 
+#define PI 3.14159265  
+
 using namespace std;
 using namespace sf;
 
@@ -245,13 +247,22 @@ public:
 		else return 0;
 	}
 };
+
 class SupportClass
 {
 protected:
 	static int ScreenHeigth;
 	static int ScreenWidth;
 	static listc NonGo;
+	static listc SlowGo;
+	static listc FastGo;
+	static int size_of_cube;
 	float const_timer_step;
+	struct XY
+	{
+		float x;
+		float y;
+	};
 public:
 	static void push_NonGo(int i)
 	{
@@ -261,6 +272,10 @@ public:
 	{
 		ScreenHeigth = s_h;
 		ScreenWidth = s_w;
+	}
+	static void SetCube(int s = 20)
+	{
+		size_of_cube = s;
 	}
 	int retSH()
 	{
@@ -275,6 +290,7 @@ public:
 class object : public SupportClass
 {
 protected:
+	int hp;
 	int id;
 	int sq_x;
 	int sq_y;
@@ -319,6 +335,21 @@ public:
 	float retY()
 	{
 		return y;
+	}
+	XY masCoord()
+	{
+		XY ll;
+		ll.x = x/ size_of_cube;
+		ll.y = y/ size_of_cube;
+		return ll;
+	}
+	int getHP()
+	{
+		return hp;
+	}
+	int setHP(int i = 10)
+	{
+		hp = i;
 	}
 };
 
@@ -420,7 +451,9 @@ class fauna : public object
 {
 private:
 protected:
-	int hp;
+	int hunger;
+	int radar;
+	int mating_time;
 	int to_x;
 	int to_y;
 	float step_x;
@@ -434,7 +467,7 @@ protected:
 	float timer_step;
 public:
 	virtual void f() = 0;
-	fauna() : timer_step(0)
+	fauna() : timer_step(0), hunger(0), radar(8)
 	{
 		const_timer_step = 1000 + rand() % 2000;
 	}
@@ -456,12 +489,13 @@ public:
 	virtual void Move(float time1)
 	{
 		double distance;
+		int ox=x/20, oy=y/20;
 		if ((isMove)&&(timer_step>const_timer_step))
 		{
+			
 			distance = sqrt((to_x - x)*(to_x - x) + (to_y - y)*(to_y - y));
 			if ((distance > 2)&&(timer_step>const_timer_step))
 			{
-				int ox = x/20 , oy = y/20;
 				Objects[oy][ox] = id;
 				x += step_x * time1*(to_x - x) / distance;
 				y += step_y * time1*(to_y - y) / distance;
@@ -475,7 +509,7 @@ public:
 					int rany = (y - 40) + rand() % 100;
 					goTO(ranx, rany, sq_x, sq_y);
 				}
-				if ((x / 20) != ox || (y / 20) != oy)
+				if ((((int)(x / 20)) != ox) || (((int)(y / 20)) != oy))
 				{
 					char tmp = Objects[oy][ox];
 					Objects[oy][ox] = '0';
@@ -489,6 +523,9 @@ public:
 			{
 				x = to_x;
 				y = to_y;
+				int xx = x / 20, yy = y/20;
+				Objects[oy][ox] = '0';
+				Objects[yy][xx] = id;
 				isMove = 0;
 				//cout << "x = " << x << " ";
 				if (isNon)
@@ -522,6 +559,39 @@ public:
 	void isselect(bool x)
 	{
 		isSelect = x;
+	}
+	virtual XY target()
+	{
+		int cos_x, sin_y, tmp_x, tmp_y;
+		XY ll;
+		ll.x = 0;
+		ll.y = 0;
+		for (int i = 1; i <= radar; i++)
+		{
+			for (int j = 0; j <= 360; j++)
+			{
+				cos_x = i*cos(j * PI / 180); 
+				sin_y = i*sin(j * PI / 180);
+				if ((cos_x != 0) && (sin_y != 0))
+				{
+					//cout << cos_x << " " << sin_y << endl;
+					tmp_x = ((int)(x / size_of_cube) + cos_x);
+					tmp_y = ((int)(y / size_of_cube) + sin_y);
+					if ((tmp_x>=0)&&(tmp_y>=0))
+					if (Objects[tmp_y][tmp_x] != '0');
+				}
+				
+			}
+		}
+		return ll;
+	};
+	int hung()
+	{
+		return hunger;
+	}
+	void hung(int i)
+	{
+		hunger = i;
 	}
 };
 
@@ -629,6 +699,7 @@ public:
 	}
 	animal(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p, int sk)
 	{
+		radar = 3;
 		++i;
 		id = ID;
 		hp = hitp;
@@ -682,3 +753,4 @@ int animal::i = -1;
 listc SupportClass::NonGo;
 int SupportClass::ScreenHeigth = 720;
 int SupportClass::ScreenWidth = 1280;
+int SupportClass::size_of_cube = 20;
