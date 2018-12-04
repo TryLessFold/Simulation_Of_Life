@@ -10,7 +10,7 @@ using namespace sf;
 
 class listc
 {
-private: 
+private:
 protected:
 	struct list
 	{
@@ -58,7 +58,7 @@ public:
 	{
 		return tail;
 	}
-	virtual void push(int i, int v = 0 , int w = 0)
+	virtual void push(int i, int v = 0, int w = 0)
 	{
 		length++;
 		if (head == NULL)
@@ -102,7 +102,7 @@ public:
 			{
 				while (1)
 				{
-					cout << tmp->id <<" "<<tmp->value;
+					cout << tmp->id << " " << tmp->value;
 					tmp = tmp->next;
 					if (tmp == NULL) throw 1;
 				}
@@ -116,8 +116,8 @@ public:
 	list* search(int i)
 	{
 		list*tmp = head;
-			while ((tmp->next != NULL)&&(tmp->id!=i))
-				tmp = tmp->next;
+		while ((tmp->next != NULL) && (tmp->id != i))
+			tmp = tmp->next;
 		if (tmp->id == i) return tmp;
 		else return 0;
 	}
@@ -138,7 +138,7 @@ class inventory : public listc
 private:
 	int Weigth;
 public:
-	inventory() 
+	inventory()
 	{
 		Weigth = 0;
 	}
@@ -149,7 +149,7 @@ public:
 	void push(int i, int v, int w) override
 	{
 		length++;
-		Weigth += v*w;
+		Weigth += v * w;
 		if (head == NULL)
 		{
 			struct list* tmp = new list;
@@ -227,7 +227,7 @@ public:
 						int i = 0;
 						for (i = 0; l >= tmp->weigth*i; i++);
 						i--;
-						Weigth -= i*tmp->weigth;
+						Weigth -= i * tmp->weigth;
 						tmp->value -= i;
 						*r = *tmp;
 						if (tmp->value == 0)
@@ -267,6 +267,10 @@ public:
 	static void push_NonGo(int i)
 	{
 		NonGo.push(i);
+	}
+	static void push_SlowGo(int i)
+	{
+		SlowGo.push(i);
 	}
 	static void SetScreen(int s_h = 720, int s_w = 1280)
 	{
@@ -339,8 +343,8 @@ public:
 	XY masCoord()
 	{
 		XY ll;
-		ll.x = x/ size_of_cube;
-		ll.y = y/ size_of_cube;
+		ll.x = x / size_of_cube;
+		ll.y = y / size_of_cube;
 		return ll;
 	}
 	int getHP()
@@ -380,7 +384,7 @@ public:
 	}
 	void f()
 	{}
-};  
+};
 
 class village : public object
 {
@@ -416,7 +420,9 @@ class flora : public object
 private:
 	static int i;
 	int lvl_gr;
-	Image s[5];
+	Image image;
+	//Image s[5];
+	bool isGrow;
 protected:
 public:
 	static int getI()
@@ -436,7 +442,7 @@ public:
 		rad_x = x;
 		rad_y = y;
 		lvl_gr = 0;
-		Image image;
+		isGrow = 1;
 		image.loadFromFile(s[0]);
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
@@ -445,6 +451,41 @@ public:
 	}
 	void f()
 	{}
+	void grow(float timer_of_grow, String* s)
+	{
+		if (timer_of_grow >= 1)
+		{
+			if (isGrow)
+			{
+				if (lvl_gr < 4)
+				{
+					lvl_gr++;
+					//cout << "Tree is grow! Level:" << lvl_gr << endl;
+					image.loadFromFile(s[lvl_gr]);
+					texture.loadFromImage(image);
+					sprite.setTexture(texture);
+					isGrow = 1;
+				}
+				else
+				{
+					//cout << "Tree is max!" << endl;
+					isGrow = 0;
+				}
+			}
+		}
+	}
+	bool isgrow()
+	{
+		return isGrow;
+	}
+	void isgrow(bool x)
+	{
+		isGrow = x;
+	}
+	int retLvlGr()
+	{
+		return lvl_gr;
+	}
 };
 
 class fauna : public object
@@ -479,35 +520,43 @@ public:
 	virtual void goTO(int t_x, int t_y, int s_x, int s_y)
 	{
 		//cout << retSW() << " " << t_x << endl;
-		while((t_x<0)||(t_x+s_x>retSH())) t_x = (x - 40) + rand() % 100;
+		while ((t_x < 0) || (t_x + s_x > retSH())) t_x = (x - 40) + rand() % 100;
 		to_x = (t_x / 20) * 20;
 		//cout << retSH() << " " << t_y << endl;
-		while ((t_y<0) || (t_y+s_y>retSW())) t_y = (y - 40) + rand() % 100;
+		while ((t_y < 0) || (t_y + s_y > retSW())) t_y = (y - 40) + rand() % 100;
 		to_y = (t_y / 20) * 20;
 		isMove = 1;
 	}
 	virtual void Move(float time1)
 	{
 		double distance;
-		int ox=x/20, oy=y/20;
-		if ((isMove)&&(timer_step>const_timer_step))
+		int ox = x / 20, oy = y / 20;
+		if ((isMove) && (timer_step > const_timer_step))
 		{
-			
+
 			distance = sqrt((to_x - x)*(to_x - x) + (to_y - y)*(to_y - y));
-			if ((distance > 2)&&(timer_step>const_timer_step))
+			if ((distance > 2) && (timer_step > const_timer_step))
 			{
 				Objects[oy][ox] = id;
 				x += step_x * time1*(to_x - x) / distance;
 				y += step_y * time1*(to_y - y) / distance;
 				int xx = x / 20, yy = y / 20;
 				int sxx = (x + sq_x) / 20; int syy = (y + sq_y) / 20;
-				if (NonGo.search(TileMap[yy][xx])|| NonGo.search(TileMap[syy][sxx]))
+				if (NonGo.search(TileMap[yy][xx]) || NonGo.search(TileMap[syy][sxx]))
 				{
 					x -= step_x * time1*(to_x - x) / distance;
 					y -= step_y * time1*(to_y - y) / distance;
 					int ranx = (x - 40) + rand() % 100;
 					int rany = (y - 40) + rand() % 100;
 					goTO(ranx, rany, sq_x, sq_y);
+				}
+				if (SlowGo.search(TileMap[yy][xx]) || SlowGo.search(TileMap[syy][sxx]))
+				{
+					changeStep(0.01);
+				}
+				else
+				{
+					changeStep(0.04);
 				}
 				if ((((int)(x / 20)) != ox) || (((int)(y / 20)) != oy))
 				{
@@ -523,7 +572,7 @@ public:
 			{
 				x = to_x;
 				y = to_y;
-				int xx = x / 20, yy = y/20;
+				int xx = x / 20, yy = y / 20;
 				Objects[oy][ox] = '0';
 				Objects[yy][xx] = id;
 				isMove = 0;
@@ -570,17 +619,17 @@ public:
 		{
 			for (int j = 0; j <= 360; j++)
 			{
-				cos_x = i*cos(j * PI / 180); 
-				sin_y = i*sin(j * PI / 180);
+				cos_x = i * cos(j * PI / 180);
+				sin_y = i * sin(j * PI / 180);
 				if ((cos_x != 0) && (sin_y != 0))
 				{
 					//cout << cos_x << " " << sin_y << endl;
 					tmp_x = ((int)(x / size_of_cube) + cos_x);
 					tmp_y = ((int)(y / size_of_cube) + sin_y);
-					if ((tmp_x>=0)&&(tmp_y>=0))
-					if (Objects[tmp_y][tmp_x] != '0');
+					if ((tmp_x >= 0) && (tmp_y >= 0))
+						if (Objects[tmp_y][tmp_x] != '0')
+							isMove = 0;
 				}
-				
 			}
 		}
 		return ll;
@@ -639,9 +688,9 @@ public:
 	}
 	void f()
 	{}
-}; 
+};
 
-class beast : public fauna 
+class beast : public fauna
 {
 private:
 	static int i;
@@ -720,7 +769,7 @@ public:
 		step_y = 0.05;
 		if (sex == 0)
 			image.loadFromFile(s[0]);
-		else if(sex == 1)
+		else if (sex == 1)
 			image.loadFromFile(s[1]);
 		else
 		{
@@ -751,6 +800,8 @@ int village::i = -1;
 int beast::i = -1;
 int animal::i = -1;
 listc SupportClass::NonGo;
+listc SupportClass::SlowGo;
+listc SupportClass::FastGo;
 int SupportClass::ScreenHeigth = 720;
 int SupportClass::ScreenWidth = 1280;
 int SupportClass::size_of_cube = 20;
