@@ -479,9 +479,16 @@ public:
 	{
 		isGrow = x;
 	}
-	int retLvlGr()
+	int lvlgr()
 	{
 		return lvl_gr;
+	}
+	void lvlgr(int x)
+	{
+		lvl_gr = x;
+		image.loadFromFile(s[x]);
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
 	}
 };
 
