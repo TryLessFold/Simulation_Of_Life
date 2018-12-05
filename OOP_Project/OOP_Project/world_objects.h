@@ -421,7 +421,7 @@ private:
 	static int i;
 	int lvl_gr;
 	Image image;
-	//Image s[5];
+	String s[5] = { "texture/4_1.png","texture/3.png","texture/3.png","texture/3.png","texture/4_2.png" };
 	bool isGrow;
 protected:
 public:
@@ -431,7 +431,7 @@ public:
 	}
 	flora()
 	{}
-	flora(String *s, int ID, int xe, int ye, int xe_s, int ye_s)
+	flora(int ID, int xe, int ye, int xe_s, int ye_s)
 	{
 		++i;
 		id = ID;
@@ -451,26 +451,23 @@ public:
 	}
 	void f()
 	{}
-	void grow(float timer_of_grow, String* s)
+	void grow()
 	{
-		if (timer_of_grow >= 1)
+		if (isGrow)
 		{
-			if (isGrow)
+			if (lvl_gr < 4)
 			{
-				if (lvl_gr < 4)
-				{
-					lvl_gr++;
-					//cout << "Tree is grow! Level:" << lvl_gr << endl;
-					image.loadFromFile(s[lvl_gr]);
-					texture.loadFromImage(image);
-					sprite.setTexture(texture);
-					isGrow = 1;
-				}
-				else
-				{
-					//cout << "Tree is max!" << endl;
-					isGrow = 0;
-				}
+				lvl_gr++;
+				//cout << "Tree is grow! Level:" << lvl_gr << endl;
+				image.loadFromFile(s[lvl_gr]);
+				texture.loadFromImage(image);
+				sprite.setTexture(texture);
+				isGrow = 1;
+			}
+			else
+			{
+				//cout << "Tree is max!" << endl;
+				isGrow = 0;
 			}
 		}
 	}
@@ -648,13 +645,14 @@ class human : public fauna
 {
 private:
 	static int i;
+	String s[2] = { "texture/12.png","texture/13.png" };
 public:
 	static int getI()
 	{
 		return i;
 	}
 	human() {}
-	human(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	human(int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
 	{
 		++i;
 		hp = hitp;
@@ -694,13 +692,14 @@ class beast : public fauna
 {
 private:
 	static int i;
+	String s[2] = { "texture/6.png","texture/9.png" };
 protected:
 public:
 	static int getI()
 	{
 		return i;
 	}
-	beast(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	beast(int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
 	{
 		++i;
 		id = ID;
@@ -740,13 +739,14 @@ class animal : public fauna //It's dangerous animal: tiger, bear
 private:
 	static int i;
 	int skin;
+	String s[4] = { "texture/7.png","texture/8.png","texture/10.png","texture/11.png" };
 protected:
 public:
 	static int getI()
 	{
 		return i;
 	}
-	animal(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p, int sk)
+	animal(int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p, int sk)
 	{
 		radar = 3;
 		++i;
