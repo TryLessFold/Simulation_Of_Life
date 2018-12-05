@@ -10,7 +10,7 @@ using namespace sf;
 
 class listc
 {
-private:
+private: 
 protected:
 	struct list
 	{
@@ -58,7 +58,7 @@ public:
 	{
 		return tail;
 	}
-	virtual void push(int i, int v = 0, int w = 0)
+	virtual void push(int i, int v = 0 , int w = 0)
 	{
 		length++;
 		if (head == NULL)
@@ -102,7 +102,7 @@ public:
 			{
 				while (1)
 				{
-					cout << tmp->id << " " << tmp->value;
+					cout << tmp->id <<" "<<tmp->value;
 					tmp = tmp->next;
 					if (tmp == NULL) throw 1;
 				}
@@ -116,8 +116,8 @@ public:
 	list* search(int i)
 	{
 		list*tmp = head;
-		while ((tmp->next != NULL) && (tmp->id != i))
-			tmp = tmp->next;
+			while ((tmp->next != NULL)&&(tmp->id!=i))
+				tmp = tmp->next;
 		if (tmp->id == i) return tmp;
 		else return 0;
 	}
@@ -138,7 +138,7 @@ class inventory : public listc
 private:
 	int Weigth;
 public:
-	inventory()
+	inventory() 
 	{
 		Weigth = 0;
 	}
@@ -149,7 +149,7 @@ public:
 	void push(int i, int v, int w) override
 	{
 		length++;
-		Weigth += v * w;
+		Weigth += v*w;
 		if (head == NULL)
 		{
 			struct list* tmp = new list;
@@ -227,7 +227,7 @@ public:
 						int i = 0;
 						for (i = 0; l >= tmp->weigth*i; i++);
 						i--;
-						Weigth -= i * tmp->weigth;
+						Weigth -= i*tmp->weigth;
 						tmp->value -= i;
 						*r = *tmp;
 						if (tmp->value == 0)
@@ -343,8 +343,8 @@ public:
 	XY masCoord()
 	{
 		XY ll;
-		ll.x = x / size_of_cube;
-		ll.y = y / size_of_cube;
+		ll.x = x/ size_of_cube;
+		ll.y = y/ size_of_cube;
 		return ll;
 	}
 	int getHP()
@@ -384,7 +384,7 @@ public:
 	}
 	void f()
 	{}
-};
+};  
 
 class village : public object
 {
@@ -419,20 +419,28 @@ class flora : public object
 {
 private:
 	static int i;
+	String growing[5];
 	int lvl_gr;
-	Image image;
-	String s[5] = { "texture/4_1.png","texture/3.png","texture/3.png","texture/3.png","texture/4_2.png" };
+	int maxgr;
 	bool isGrow;
+	Image s[5];
 protected:
 public:
 	static int getI()
 	{
 		return i;
 	}
+	static void setI(int ch, int ii)
+	{
+		if (ch == 0) i -= ii;
+		else if (ch == 1) i += ii;
+		else i = ii;
+	}
 	flora()
 	{}
-	flora(int ID, int xe, int ye, int xe_s, int ye_s)
+	flora(String *s, int ID, int xe, int ye, int xe_s, int ye_s, int maxgrow)
 	{
+		maxgr = maxgrow;
 		++i;
 		id = ID;
 		x = xe;
@@ -441,30 +449,39 @@ public:
 		sq_y = ye_s;
 		rad_x = x;
 		rad_y = y;
+		isGrow = 0;
 		lvl_gr = 0;
-		isGrow = 1;
+		Image image;
 		image.loadFromFile(s[0]);
 		texture.loadFromImage(image);
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
+		for (int i = 0; i < maxgr; i++)
+		{
+			growing[i] = s[i];
+		}
 	}
-	void f()
-	{}
 	void grow()
 	{
-		if (isGrow)
+		if (lvl_gr < maxgr-1)
 		{
-			if (lvl_gr < 2)
-			{
-				lvl_gr++;
-				//cout << "Tree is grow! Level:" << lvl_gr << endl;
-				image.loadFromFile(s[lvl_gr]);
-				texture.loadFromImage(image);
-				sprite.setTexture(texture);
-				isGrow = 1;
-			}
+			lvl_gr++;
+			Image image;
+			image.loadFromFile(growing[lvl_gr]);
+			texture.loadFromImage(image);
+			sprite.setTexture(texture);
+			if (lvl_gr == maxgr) isGrow = 1;
 		}
+	}
+	void take()
+	{
+		isGrow = 0;
+		lvl_gr = 0;
+		Image image;
+		image.loadFromFile(growing[lvl_gr]);
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
 	}
 	bool isgrow()
 	{
@@ -474,23 +491,15 @@ public:
 	{
 		isGrow = x;
 	}
-	int lvlgr()
-	{
-		return lvl_gr;
-	}
-	void lvlgr(int x)
-	{
-		lvl_gr = x;
-		image.loadFromFile(s[x]);
-		texture.loadFromImage(image);
-		sprite.setTexture(texture);
-	}
+	void f()
+	{}
 };
 
 class fauna : public object
 {
 private:
 protected:
+	float base_move;
 	int hunger;
 	int radar;
 	int mating_time;
@@ -519,29 +528,29 @@ public:
 	virtual void goTO(int t_x, int t_y, int s_x, int s_y)
 	{
 		//cout << retSW() << " " << t_x << endl;
-		while ((t_x < 0) || (t_x + s_x > retSH())) t_x = (x - 40) + rand() % 100;
+		while((t_x<0)||(t_x+s_x>retSH())) t_x = (x - 40) + rand() % 100;
 		to_x = (t_x / 20) * 20;
 		//cout << retSH() << " " << t_y << endl;
-		while ((t_y < 0) || (t_y + s_y > retSW())) t_y = (y - 40) + rand() % 100;
+		while ((t_y<0) || (t_y+s_y>retSW())) t_y = (y - 40) + rand() % 100;
 		to_y = (t_y / 20) * 20;
 		isMove = 1;
 	}
 	virtual void Move(float time1)
 	{
 		double distance;
-		int ox = x / 20, oy = y / 20;
-		if ((isMove) && (timer_step > const_timer_step))
+		int ox=x/20, oy=y/20;
+		if ((isMove)&&(timer_step>const_timer_step))
 		{
-
+			
 			distance = sqrt((to_x - x)*(to_x - x) + (to_y - y)*(to_y - y));
-			if ((distance > 2) && (timer_step > const_timer_step))
+			if ((distance > 2)&&(timer_step>const_timer_step))
 			{
 				Objects[oy][ox] = id;
 				x += step_x * time1*(to_x - x) / distance;
 				y += step_y * time1*(to_y - y) / distance;
 				int xx = x / 20, yy = y / 20;
 				int sxx = (x + sq_x) / 20; int syy = (y + sq_y) / 20;
-				if (NonGo.search(TileMap[yy][xx]) || NonGo.search(TileMap[syy][sxx]))
+				if (NonGo.search(TileMap[yy][xx])|| NonGo.search(TileMap[syy][sxx]))
 				{
 					x -= step_x * time1*(to_x - x) / distance;
 					y -= step_y * time1*(to_y - y) / distance;
@@ -553,10 +562,7 @@ public:
 				{
 					changeStep(0.01);
 				}
-				else
-				{
-					changeStep(0.04);
-				}
+				else changeStep(base_move);
 				if ((((int)(x / 20)) != ox) || (((int)(y / 20)) != oy))
 				{
 					char tmp = Objects[oy][ox];
@@ -571,7 +577,7 @@ public:
 			{
 				x = to_x;
 				y = to_y;
-				int xx = x / 20, yy = y / 20;
+				int xx = x / 20, yy = y/20;
 				Objects[oy][ox] = '0';
 				Objects[yy][xx] = id;
 				isMove = 0;
@@ -618,17 +624,17 @@ public:
 		{
 			for (int j = 0; j <= 360; j++)
 			{
-				cos_x = i * cos(j * PI / 180);
-				sin_y = i * sin(j * PI / 180);
+				cos_x = i*cos(j * PI / 180); 
+				sin_y = i*sin(j * PI / 180);
 				if ((cos_x != 0) && (sin_y != 0))
 				{
 					//cout << cos_x << " " << sin_y << endl;
 					tmp_x = ((int)(x / size_of_cube) + cos_x);
 					tmp_y = ((int)(y / size_of_cube) + sin_y);
-					if ((tmp_x >= 0) && (tmp_y >= 0))
-						if (Objects[tmp_y][tmp_x] != '0')
-							isMove = 0;
+					if ((tmp_x>=0)&&(tmp_y>=0))
+					if (Objects[tmp_y][tmp_x] != '0');
 				}
+				
 			}
 		}
 		return ll;
@@ -641,21 +647,39 @@ public:
 	{
 		hunger = i;
 	}
+	void hung(int ch ,int i)
+	{
+		if (ch == 0)
+			hunger -= i;
+		else 
+			hunger += i;
+	}
+	float getStep()
+	{
+		return step_x;
+	}
 };
 
 class human : public fauna
 {
 private:
 	static int i;
-	String s[2] = { "texture/12.png","texture/13.png" };
 public:
 	static int getI()
 	{
 		return i;
 	}
-	human() {}
-	human(int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	static void setI(int ch, int ii)
 	{
+		if (ch == 0) i -= ii;
+		else if (ch == 1) i += ii;
+		else i = ii;
+	}
+	human() {}
+	human(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	{
+		hunger = 0;
+		base_move = 0.04;
 		++i;
 		hp = hitp;
 		id = ID;
@@ -688,21 +712,28 @@ public:
 	}
 	void f()
 	{}
-};
+}; 
 
-class beast : public fauna
+class beast : public fauna 
 {
 private:
 	static int i;
-	String s[2] = { "texture/6.png","texture/9.png" };
 protected:
 public:
 	static int getI()
 	{
 		return i;
 	}
-	beast(int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	static void setI(int ch, int ii)
 	{
+		if (ch == 0) i -= ii;
+		else if (ch == 1) i += ii;
+		else i = ii;
+	}
+	beast(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	{
+		hunger = 0;
+		base_move = 0.04;
 		++i;
 		id = ID;
 		hp = hitp;
@@ -718,8 +749,8 @@ public:
 		isMove = 1;
 		isNon = 1;
 		isFear = 0;
-		step_x = 0.05;
-		step_y = 0.05;
+		step_x = 0.04;
+		step_y = 0.04;
 		if (sex == 0)
 			image.loadFromFile(s[0]);
 		else
@@ -740,16 +771,22 @@ class animal : public fauna //It's dangerous animal: tiger, bear
 {
 private:
 	static int i;
-	int skin;
-	String s[4] = { "texture/7.png","texture/8.png","texture/10.png","texture/11.png" };
 protected:
 public:
 	static int getI()
 	{
 		return i;
 	}
-	animal(int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p, int sk)
+	static void setI(int ch, int ii)
 	{
+		if (ch == 0) i -= ii;
+		else if (ch == 1) i += ii;
+		else i = ii;
+	}
+	animal(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	{
+		hunger = 0;
+		base_move = 0.04;
 		radar = 3;
 		++i;
 		id = ID;
@@ -761,25 +798,16 @@ public:
 		rad_x = x;
 		rad_y = y;
 		sex = p;
-		skin = sk;
 		Image image;
 		isAttack = 0;
 		isMove = 0;
 		isNon = 1;
 		isFear = 0;
-		step_x = 0.05;
-		step_y = 0.05;
-		if (sex == 0)
-			image.loadFromFile(s[0]);
-		else if (sex == 1)
-			image.loadFromFile(s[1]);
-		else
-		{
-			if (skin == 0)
-				image.loadFromFile(s[2]);
-			else
-				image.loadFromFile(s[3]);
-		}
+		step_x = 0.04;
+		step_y = 0.04;
+		if (sex ==0)
+		image.loadFromFile(s[0]);
+		else image.loadFromFile(s[1]);
 		isAttack = 0;
 		isMove = 0;
 		isNon = 1;
@@ -803,7 +831,6 @@ int beast::i = -1;
 int animal::i = -1;
 listc SupportClass::NonGo;
 listc SupportClass::SlowGo;
-listc SupportClass::FastGo;
 int SupportClass::ScreenHeigth = 720;
 int SupportClass::ScreenWidth = 1280;
 int SupportClass::size_of_cube = 20;
