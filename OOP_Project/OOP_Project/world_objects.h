@@ -455,7 +455,7 @@ public:
 	{
 		if (isGrow)
 		{
-			if (lvl_gr < 4)
+			if (lvl_gr < 2)
 			{
 				lvl_gr++;
 				//cout << "Tree is grow! Level:" << lvl_gr << endl;
@@ -463,11 +463,6 @@ public:
 				texture.loadFromImage(image);
 				sprite.setTexture(texture);
 				isGrow = 1;
-			}
-			else
-			{
-				//cout << "Tree is max!" << endl;
-				isGrow = 0;
 			}
 		}
 	}
