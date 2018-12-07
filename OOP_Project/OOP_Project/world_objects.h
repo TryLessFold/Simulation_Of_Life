@@ -116,10 +116,14 @@ public:
 	list* search(int i)
 	{
 		list*tmp = head;
-			while ((tmp->next != NULL)&&(tmp->id!=i))
+		if (tmp != NULL)
+		{
+			while ((tmp->next != NULL) && (tmp->id != i))
 				tmp = tmp->next;
-		if (tmp->id == i) return tmp;
-		else return 0;
+			if (tmp->id == i) return tmp;
+			else return 0;
+		}
+		return 0;
 	}
 	void DeleteList()
 	{
@@ -298,19 +302,30 @@ protected:
 	int id;
 	int sq_x;
 	int sq_y;
-	int rad_x;
-	int rad_y;
 	double x;
 	double y;
 	Texture texture;
 	Sprite sprite;
 	inventory Inv;
+	object(const object &copy)
+	{
+		x = copy.x;
+		y = copy.y;
+		sq_x = copy.sq_x;
+		sq_y = copy.sq_y;
+		id = copy.id;
+		hp = copy.hp;
+		texture = copy.texture;
+		sprite = copy.sprite;
+		Inv = copy.Inv;
+	}
 public:
 	object() {}
 	virtual ~object()
 	{
 		Inv.DeleteList();
 	}
+	virtual object* copy() const = 0;
 	virtual void f() = 0;
 	Sprite getSprite()
 	{
@@ -327,10 +342,6 @@ public:
 	inventory inv()
 	{
 		return Inv;
-	}
-	int Radius()
-	{
-		return rad_x;
 	}
 	float retX()
 	{
@@ -361,6 +372,7 @@ class nonOrg : public object
 {
 private:
 	static int i;
+	String back;
 public:
 	static int getI()
 	{
@@ -369,6 +381,7 @@ public:
 	nonOrg() {}
 	nonOrg(String s, int ID, int xe, int ye, int xe_s, int ye_s)
 	{
+		back = s;
 		++i;
 		id = ID;
 		x = xe;
@@ -381,6 +394,20 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
+	}
+	nonOrg(const nonOrg &copy) : object(copy)
+	{
+		Image image;
+		image.loadFromFile(back);
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+	nonOrg* copy() const
+	{
+		nonOrg *ret = new nonOrg(*this);
+		return ret;
 	}
 	void f()
 	{}
@@ -390,6 +417,7 @@ class village : public object
 {
 private:
 	static int i;
+	String back;
 public:
 	static int getI()
 	{
@@ -398,6 +426,7 @@ public:
 	village() {}
 	village(String s, int ID, int xe, int ye, int xe_s, int ye_s)
 	{
+		back = s;
 		++i;
 		id = ID;
 		x = xe;
@@ -410,6 +439,20 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
+	}
+	village(const village &copy) : object(copy)
+	{
+		Image image;
+		image.loadFromFile(back);
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+	village* copy() const
+	{
+		village *ret = new village(*this);
+		return ret;
 	}
 	void f()
 	{}
@@ -423,7 +466,6 @@ private:
 	int lvl_gr;
 	int maxgr;
 	bool isGrow;
-	Image s[5];
 protected:
 public:
 	static int getI()
@@ -447,8 +489,6 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
-		rad_x = x;
-		rad_y = y;
 		isGrow = 0;
 		lvl_gr = 0;
 		Image image;
@@ -461,6 +501,27 @@ public:
 		{
 			growing[i] = s[i];
 		}
+	}
+	flora(const flora &copy) : object(copy)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			growing[i] = copy.growing[i];
+		}
+		lvl_gr = copy.lvl_gr;
+		maxgr = copy.maxgr;
+		isGrow = copy.isGrow;
+		Image image;
+		image.loadFromFile(growing[lvl_gr]);
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+	virtual flora* copy() const
+	{
+		flora *ret = new flora(*this);
+		return ret;
 	}
 	void grow()
 	{
@@ -499,6 +560,7 @@ class fauna : public object
 {
 private:
 protected:
+	String sex_t[2];
 	float base_move;
 	int hunger;
 	int radar;
@@ -514,12 +576,37 @@ protected:
 	bool isFear;
 	bool isSelect;
 	float timer_step;
+	listc ration;
+	fauna(const fauna &copy) : object(copy)
+	{
+		step_x = copy.step_x;
+		step_y = copy.step_y;
+		sex = copy.sex;
+		base_move = copy.base_move;
+		hunger = copy.hunger;
+		for (int i = 0; i < 2; i++)
+		{
+			sex_t[i] = copy.sex_t[i];
+		}
+		radar = copy.radar;
+		mating_time = copy.mating_time;
+		to_x = copy.to_x;
+		to_y = copy.to_y;
+		isAttack = copy.isAttack;
+		isMove = copy.isMove;
+		isNon = copy.isNon;
+		isFear = copy.isFear;
+		isSelect = copy.isSelect;
+		timer_step = copy.timer_step;
+	}
 public:
 	virtual void f() = 0;
+	virtual ~fauna() {}
 	fauna() : timer_step(0), hunger(0), radar(8)
 	{
 		const_timer_step = 1000 + rand() % 2000;
 	}
+
 	void changeStep(float step)
 	{
 		step_x = step;
@@ -573,7 +660,7 @@ public:
 			{
 				timer_step += time1;
 			}
-			else
+			else if (!isAttack)
 			{
 				x = to_x;
 				y = to_y;
@@ -631,8 +718,21 @@ public:
 					//cout << cos_x << " " << sin_y << endl;
 					tmp_x = ((int)(x / size_of_cube) + cos_x);
 					tmp_y = ((int)(y / size_of_cube) + sin_y);
-					if ((tmp_x>=0)&&(tmp_y>=0))
-					if (Objects[tmp_y][tmp_x] != '0');
+					if ((tmp_x >= 0)&&(tmp_x< WIDTH_MAP) && (tmp_y >= 0)&& (tmp_y < HEIGHT_MAP))
+					{
+						if (Objects[tmp_y][tmp_x] != '0')
+						{
+							//ration.output();
+							//Inv.output();
+							//cout << Objects[tmp_y][tmp_x];
+							if ((hunger >= 5) && (ration.search(Objects[tmp_y][tmp_x])))
+							{
+								cout << 1;
+								isAttack = 1;
+								goTO(tmp_x * 20, tmp_y * 20, 20, 20);
+							}
+						}
+					}
 				}
 				
 			}
@@ -657,6 +757,10 @@ public:
 	float getStep()
 	{
 		return step_x;
+	}
+	listc* rat()
+	{
+		return &ration;
 	}
 };
 
@@ -687,8 +791,6 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
-		rad_x = x;
-		rad_y = y;
 		sex = p;
 		Image image;
 		isAttack = 0;
@@ -709,6 +811,27 @@ public:
 		int ranx = (x - 40) + rand() % 100;
 		int rany = (y - 40) + rand() % 100;
 		goTO(ranx, rany, sq_x, sq_y);
+		for (int i = 0; i < 2; i++)
+		{
+			sex_t[i] = s[i];
+		}
+	}
+	human(const human &copy) : fauna(copy)
+	{
+		Image image;
+		if (sex == 0)
+			image.loadFromFile(sex_t[0]);
+		else
+			image.loadFromFile(sex_t[1]);
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+	human* copy() const
+	{
+		human *ret = new human(*this);
+		return ret;
 	}
 	void f()
 	{}
@@ -741,8 +864,6 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
-		rad_x = x;
-		rad_y = y;
 		sex = p;
 		Image image;
 		isAttack = 0;
@@ -762,6 +883,27 @@ public:
 		int ranx = (x - 40) + rand() % 100;
 		int rany = (y - 40) + rand() % 100;
 		goTO(ranx, rany, sq_x, sq_y);
+		for (int i = 0; i < 2; i++)
+		{
+			sex_t[i] = s[i];
+		}
+	}
+	beast(const beast &copy) : fauna(copy)
+	{
+		Image image;
+		if (sex == 0)
+			image.loadFromFile(sex_t[0]);
+		else
+			image.loadFromFile(sex_t[1]);
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+	beast* copy() const 
+	{ 
+		beast *ret = new beast(*this);
+		return ret; 
 	}
 	void f()
 	{}
@@ -795,8 +937,6 @@ public:
 		y = ye;
 		sq_x = xe_s;
 		sq_y = ye_s;
-		rad_x = x;
-		rad_y = y;
 		sex = p;
 		Image image;
 		isAttack = 0;
@@ -818,6 +958,27 @@ public:
 		int ranx = (x - 40) + rand() % 100;
 		int rany = (y - 40) + rand() % 100;
 		goTO(ranx, rany, sq_x, sq_y);
+		for (int i = 0; i < 2; i++)
+		{
+			sex_t[i] = s[i];
+		}
+	}
+	animal(const animal &copy) : fauna(copy)
+	{
+		Image image;
+		if (sex == 0)
+			image.loadFromFile(sex_t[0]);
+		else
+			image.loadFromFile(sex_t[1]);
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
+		sprite.setPosition(x, y);
+	}
+	animal* copy() const
+	{
+		animal *ret = new animal(*this);
+		return ret;
 	}
 	void f()
 	{}
