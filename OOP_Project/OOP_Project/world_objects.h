@@ -10,7 +10,7 @@ using namespace sf;
 
 class listc
 {
-private: 
+private:
 protected:
 	struct list
 	{
@@ -58,7 +58,7 @@ public:
 	{
 		return tail;
 	}
-	virtual void push(int i, int v = 0 , int w = 0)
+	virtual void push(int i, int v = 0, int w = 0)
 	{
 		length++;
 		if (head == NULL)
@@ -102,7 +102,7 @@ public:
 			{
 				while (1)
 				{
-					cout << tmp->id <<" "<<tmp->value;
+					cout << tmp->id << " " << tmp->value;
 					tmp = tmp->next;
 					if (tmp == NULL) throw 1;
 				}
@@ -123,17 +123,9 @@ public:
 			if (tmp->id == i) return tmp;
 			else
 			{
-				tmp = new list;
-				tmp->value = 0;
-				tmp->weigth = 0;
-				tmp->id = 0;
 				return 0;
 			}
 		}
-		tmp = new list;
-		tmp->value = 0;
-		tmp->weigth = 0;
-		tmp->id = 0;
 		return 0;
 	}
 	void DeleteList()
@@ -153,7 +145,7 @@ class inventory : public listc
 private:
 	int Weigth;
 public:
-	inventory() 
+	inventory()
 	{
 		Weigth = 0;
 	}
@@ -164,7 +156,7 @@ public:
 	void push(int i, int v, int w) override
 	{
 		length++;
-		Weigth += v*w;
+		Weigth += v * w;
 		if (head == NULL)
 		{
 			struct list* tmp = new list;
@@ -242,7 +234,7 @@ public:
 						int i = 0;
 						for (i = 0; l >= tmp->weigth*i; i++);
 						i--;
-						Weigth -= i*tmp->weigth;
+						Weigth -= i * tmp->weigth;
 						tmp->value -= i;
 						*r = *tmp;
 						if (tmp->value == 0)
@@ -372,8 +364,8 @@ public:
 	{
 		XY ll;
 		ll.mode = -1;
-		ll.x = x/ size_of_cube;
-		ll.y = y/ size_of_cube;
+		ll.x = x / size_of_cube;
+		ll.y = y / size_of_cube;
 		return ll;
 	}
 	int getHP()
@@ -435,7 +427,7 @@ public:
 	}
 	void f()
 	{}
-};  
+};
 
 class village : public object
 {
@@ -551,7 +543,7 @@ public:
 	}
 	void grow()
 	{
-		if (lvl_gr < maxgr-1)
+		if (lvl_gr < maxgr - 1)
 		{
 			lvl_gr++;
 			Image image;
@@ -643,36 +635,36 @@ public:
 	virtual void goTO(int t_x, int t_y, int s_x, int s_y)
 	{
 		//cout << retSW() << " " << t_x << endl;
-		while((t_x<0)||(t_x+s_x>retSH())) t_x = (x - 40) + rand() % 100;
+		while ((t_x < 0) || (t_x + s_x > retSH())) t_x = (x - 40) + rand() % 100;
 		to_x = (t_x / 20) * 20;
 		//cout << retSH() << " " << t_y << endl;
-		while ((t_y<0) || (t_y+s_y>retSW())) t_y = (y - 40) + rand() % 100;
+		while ((t_y < 0) || (t_y + s_y > retSW())) t_y = (y - 40) + rand() % 100;
 		to_y = (t_y / 20) * 20;
 		isMove = 1;
 	}
 	virtual void Move(float time1)
 	{
 		double distance;
-		int ox=x/20, oy=y/20;
-		if ((isMove)&&(timer_step>const_timer_step))
+		int ox = x / 20, oy = y / 20;
+		if ((isMove) && (timer_step > const_timer_step))
 		{
-			
+
 			distance = sqrt((to_x - x)*(to_x - x) + (to_y - y)*(to_y - y));
-			if ((distance > 2)&&(timer_step>const_timer_step))
+			if ((distance > 2) && (timer_step > const_timer_step))
 			{
 				Objects[oy][ox] = id;
 				x += step_x * time1*(to_x - x) / distance;
 				y += step_y * time1*(to_y - y) / distance;
 				int xx = x / 20, yy = y / 20;
 				int sxx = (x + sq_x) / 20; int syy = (y + sq_y) / 20;
-				if (NonGo.search(TileMap[yy][xx])|| NonGo.search(TileMap[syy][sxx]))
+				if (NonGo.search(TileMap[yy][xx]) || NonGo.search(TileMap[syy][sxx]))
 				{
 					x -= step_x * time1*(to_x - x) / distance;
 					y -= step_y * time1*(to_y - y) / distance;
 					int ranx = (x - 40) + rand() % 100;
 					int rany = (y - 40) + rand() % 100;
-					if(isNon)
-					goTO(ranx, rany, sq_x, sq_y);
+					if (isNon)
+						goTO(ranx, rany, sq_x, sq_y);
 					else isMove = 0;
 				}
 				if (SlowGo.search(TileMap[yy][xx]) || SlowGo.search(TileMap[syy][sxx]))
@@ -691,7 +683,7 @@ public:
 			{
 				timer_step += time1;
 			}
-			else if ((isAttack)||(isMating))
+			else if ((isAttack) || (isMating))
 			{
 				x = to_x;
 				y = to_y;
@@ -704,7 +696,7 @@ public:
 			{
 				x = to_x;
 				y = to_y;
-				int xx = x / 20, yy = y/20;
+				int xx = x / 20, yy = y / 20;
 				Objects[oy][ox] = '0';
 				Objects[yy][xx] = id;
 				isMove = 0;
@@ -765,7 +757,7 @@ public:
 	{
 		isMating = x;
 	}
-	virtual XY target(int sex=0)
+	virtual XY target(int sex = 0)
 	{
 		int cos_x, sin_y, tmp_x, tmp_y;
 		XY ll;
@@ -778,14 +770,14 @@ public:
 		{
 			for (int j = 0; j <= 360; j++)
 			{
-				cos_x = i*cos(j * PI / 180); 
-				sin_y = i*sin(j * PI / 180);
+				cos_x = i * cos(j * PI / 180);
+				sin_y = i * sin(j * PI / 180);
 				if ((cos_x != 0) && (sin_y != 0))
 				{
 					//cout << cos_x << " " << sin_y << endl;
 					tmp_x = ((int)(x / size_of_cube) + cos_x);
 					tmp_y = ((int)(y / size_of_cube) + sin_y);
-					if ((tmp_x >= 0)&&(tmp_x< WIDTH_MAP) && (tmp_y >= 0)&& (tmp_y < HEIGHT_MAP))
+					if ((tmp_x >= 0) && (tmp_x < WIDTH_MAP) && (tmp_y >= 0) && (tmp_y < HEIGHT_MAP))
 					{
 						if (Objects[tmp_y][tmp_x] != '0')
 						{
@@ -793,7 +785,7 @@ public:
 							{
 								isAttack = 1;
 								isNon = 0;
-								if (((tmp_x * 2 + tmp_y * 2) < (to_x / size_of_cube * 2 + to_y / size_of_cube * 2))||((to_y == y)&&(to_x==x)))
+								if (((tmp_x * 2 + tmp_y * 2) < (to_x / size_of_cube * 2 + to_y / size_of_cube * 2)) || ((to_y == y) && (to_x == x)))
 								{
 									//goTO((tmp_x) * size_of_cube, (tmp_y) * size_of_cube, size_of_cube, size_of_cube);
 									ll.x = tmp_x;
@@ -825,11 +817,11 @@ public:
 	{
 		hunger = i;
 	}
-	void hung(int ch ,int i)
+	void hung(int ch, int i)
 	{
 		if (ch == 0)
 			hunger -= i;
-		else 
+		else
 			hunger += i;
 		if (hunger < 0) hunger = 0;
 	}
@@ -843,8 +835,8 @@ public:
 	}
 	bool mating(float time1)
 	{
-		if(timer_mating<=mating_time)
-		timer_mating += time1;
+		if (timer_mating <= mating_time)
+			timer_mating += time1;
 		//cout << timer_mating <<" "<< mating_time << endl;
 		if (timer_mating >= mating_time) return 1;
 		return 0;
@@ -936,9 +928,9 @@ public:
 	}
 	void f()
 	{}
-}; 
+};
 
-class beast : public fauna 
+class beast : public fauna
 {
 private:
 	static int i;
@@ -1006,10 +998,10 @@ public:
 		sprite.setTextureRect(IntRect(0, 0, sq_x, sq_y));
 		sprite.setPosition(x, y);
 	}
-	beast* copy() const 
-	{ 
+	beast* copy() const
+	{
 		beast *ret = new beast(*this);
-		return ret; 
+		return ret;
 	}
 	int Dam()
 	{
@@ -1061,8 +1053,8 @@ public:
 		isFear = 0;
 		step_x = 0.04;
 		step_y = 0.04;
-		if (sex ==0)
-		image.loadFromFile(s[0]);
+		if (sex == 0)
+			image.loadFromFile(s[0]);
 		else image.loadFromFile(s[1]);
 		isAttack = 0;
 		isMove = 0;
