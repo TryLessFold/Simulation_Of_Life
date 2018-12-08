@@ -121,8 +121,19 @@ public:
 			while ((tmp->next != NULL) && (tmp->id != i))
 				tmp = tmp->next;
 			if (tmp->id == i) return tmp;
-			else return 0;
+			else
+			{
+				tmp = new list;
+				tmp->value = 0;
+				tmp->weigth = 0;
+				tmp->id = 0;
+				return 0;
+			}
 		}
+		tmp = new list;
+		tmp->value = 0;
+		tmp->weigth = 0;
+		tmp->id = 0;
 		return 0;
 	}
 	void DeleteList()
@@ -262,12 +273,13 @@ protected:
 	static listc FastGo;
 	static int size_of_cube;
 	float const_timer_step;
+public:
 	struct XY
 	{
+		int mode;
 		float x;
 		float y;
 	};
-public:
 	static void push_NonGo(int i)
 	{
 		NonGo.push(i);
@@ -284,6 +296,10 @@ public:
 	static void SetCube(int s = 20)
 	{
 		size_of_cube = s;
+	}
+	static int GetCube()
+	{
+		return size_of_cube;
 	}
 	int retSH()
 	{
@@ -335,13 +351,14 @@ public:
 	{
 		return id;
 	}
-	void reload()
+	virtual void reload()
 	{
 		sprite.setPosition(x, y);
+		Objects[(int)y / size_of_cube][(int)x / size_of_cube] = id;
 	}
-	inventory inv()
+	inventory* inv()
 	{
-		return Inv;
+		return &Inv;
 	}
 	float retX()
 	{
@@ -354,6 +371,7 @@ public:
 	XY masCoord()
 	{
 		XY ll;
+		ll.mode = -1;
 		ll.x = x/ size_of_cube;
 		ll.y = y/ size_of_cube;
 		return ll;
@@ -362,7 +380,7 @@ public:
 	{
 		return hp;
 	}
-	int setHP(int i = 10)
+	void setHP(int i = 10)
 	{
 		hp = i;
 	}
@@ -372,6 +390,7 @@ class nonOrg : public object
 {
 private:
 	static int i;
+	int time_to_break;
 	String back;
 public:
 	static int getI()
@@ -379,8 +398,9 @@ public:
 		return i;
 	}
 	nonOrg() {}
-	nonOrg(String s, int ID, int xe, int ye, int xe_s, int ye_s)
+	nonOrg(String s, int ID, int xe, int ye, int xe_s, int ye_s, int t_b)
 	{
+		time_to_break = t_b;
 		back = s;
 		++i;
 		id = ID;
@@ -408,6 +428,10 @@ public:
 	{
 		nonOrg *ret = new nonOrg(*this);
 		return ret;
+	}
+	void reload()
+	{
+		sprite.setPosition(x, y);
 	}
 	void f()
 	{}
@@ -463,6 +487,7 @@ class flora : public object
 private:
 	static int i;
 	String growing[5];
+	int time_to_break;
 	int lvl_gr;
 	int maxgr;
 	bool isGrow;
@@ -480,8 +505,9 @@ public:
 	}
 	flora()
 	{}
-	flora(String *s, int ID, int xe, int ye, int xe_s, int ye_s, int maxgrow)
+	flora(String *s, int ID, int xe, int ye, int xe_s, int ye_s, int maxgrow, int t_b)
 	{
+		time_to_break = t_b;
 		maxgr = maxgrow;
 		++i;
 		id = ID;
@@ -571,10 +597,12 @@ protected:
 	float step_y;
 	int sex;
 	bool isAttack;
+	bool isMating;
 	bool isMove;
 	bool isNon;
 	bool isFear;
 	bool isSelect;
+	float timer_mating;
 	float timer_step;
 	listc ration;
 	fauna(const fauna &copy) : object(copy)
@@ -643,12 +671,15 @@ public:
 					y -= step_y * time1*(to_y - y) / distance;
 					int ranx = (x - 40) + rand() % 100;
 					int rany = (y - 40) + rand() % 100;
+					if(isNon)
 					goTO(ranx, rany, sq_x, sq_y);
+					else isMove = 0;
 				}
 				if (SlowGo.search(TileMap[yy][xx]) || SlowGo.search(TileMap[syy][sxx]))
 				{
-					changeStep(0.01);
+					changeStep(0.02);
 				}
+				else if (isAttack) changeStep(0.06);
 				else changeStep(base_move);
 				if ((((int)(x / 20)) != ox) || (((int)(y / 20)) != oy))
 				{
@@ -660,7 +691,16 @@ public:
 			{
 				timer_step += time1;
 			}
-			else if (!isAttack)
+			else if ((isAttack)||(isMating))
+			{
+				x = to_x;
+				y = to_y;
+				int xx = x / 20, yy = y / 20;
+				Objects[oy][ox] = '0';
+				Objects[yy][xx] = id;
+				isNon = 1;
+			}
+			else
 			{
 				x = to_x;
 				y = to_y;
@@ -701,12 +741,39 @@ public:
 	{
 		isSelect = x;
 	}
-	virtual XY target()
+	bool isnon()
+	{
+		return isNon;
+	}
+	void isnon(bool x)
+	{
+		isNon = x;
+	}
+	bool isattack()
+	{
+		return isAttack;
+	}
+	void isattack(bool x)
+	{
+		isAttack = x;
+	}
+	bool ismating()
+	{
+		return isMating;
+	}
+	void ismating(bool x)
+	{
+		isMating = x;
+	}
+	virtual XY target(int sex=0)
 	{
 		int cos_x, sin_y, tmp_x, tmp_y;
 		XY ll;
 		ll.x = 0;
 		ll.y = 0;
+		ll.mode = 0;
+		isAttack = 0;
+		isNon = 1;
 		for (int i = 1; i <= radar; i++)
 		{
 			for (int j = 0; j <= 360; j++)
@@ -722,19 +789,30 @@ public:
 					{
 						if (Objects[tmp_y][tmp_x] != '0')
 						{
-							//ration.output();
-							//Inv.output();
-							//cout << Objects[tmp_y][tmp_x];
 							if ((hunger >= 5) && (ration.search(Objects[tmp_y][tmp_x])))
 							{
-								cout << 1;
 								isAttack = 1;
-								goTO(tmp_x * 20, tmp_y * 20, 20, 20);
+								isNon = 0;
+								if (((tmp_x * 2 + tmp_y * 2) < (to_x / size_of_cube * 2 + to_y / size_of_cube * 2))||((to_y == y)&&(to_x==x)))
+								{
+									//goTO((tmp_x) * size_of_cube, (tmp_y) * size_of_cube, size_of_cube, size_of_cube);
+									ll.x = tmp_x;
+									ll.y = tmp_y;
+									ll.mode = 1;
+								}
+							}
+							if ((timer_mating >= mating_time) && (Objects[tmp_y][tmp_x] == id))
+							{
+								if (((tmp_x * 2 + tmp_y * 2) < (to_x / size_of_cube * 2 + to_y / size_of_cube * 2)) || ((to_y == y) && (to_x == x)))
+								{
+									ll.x = tmp_x;
+									ll.y = tmp_y;
+									ll.mode = 2;
+								}
 							}
 						}
 					}
 				}
-				
 			}
 		}
 		return ll;
@@ -753,6 +831,7 @@ public:
 			hunger -= i;
 		else 
 			hunger += i;
+		if (hunger < 0) hunger = 0;
 	}
 	float getStep()
 	{
@@ -761,6 +840,26 @@ public:
 	listc* rat()
 	{
 		return &ration;
+	}
+	bool mating(float time1)
+	{
+		if(timer_mating<=mating_time)
+		timer_mating += time1;
+		//cout << timer_mating <<" "<< mating_time << endl;
+		if (timer_mating >= mating_time) return 1;
+		return 0;
+	}
+	void matings(int i)
+	{
+		timer_mating = i;
+	}
+	int getSex()
+	{
+		return sex;
+	}
+	void setTimer_S(float s)
+	{
+		timer_step = s;
 	}
 };
 
@@ -780,8 +879,10 @@ public:
 		else i = ii;
 	}
 	human() {}
-	human(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	human(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p, int m_t)
 	{
+		timer_mating = 0;
+		mating_time = m_t;
 		hunger = 0;
 		base_move = 0.04;
 		++i;
@@ -842,6 +943,7 @@ class beast : public fauna
 private:
 	static int i;
 protected:
+	int dam;
 public:
 	static int getI()
 	{
@@ -853,8 +955,11 @@ public:
 		else if (ch == 1) i += ii;
 		else i = ii;
 	}
-	beast(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	beast(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p, int a, int m_t)
 	{
+		timer_mating = 0;
+		mating_time = m_t;
+		dam = a;
 		hunger = 0;
 		base_move = 0.04;
 		++i;
@@ -890,6 +995,7 @@ public:
 	}
 	beast(const beast &copy) : fauna(copy)
 	{
+		dam = copy.dam;
 		Image image;
 		if (sex == 0)
 			image.loadFromFile(sex_t[0]);
@@ -904,6 +1010,14 @@ public:
 	{ 
 		beast *ret = new beast(*this);
 		return ret; 
+	}
+	int Dam()
+	{
+		return dam;
+	}
+	void Dam(int i)
+	{
+		dam = i;
 	}
 	void f()
 	{}
@@ -925,11 +1039,13 @@ public:
 		else if (ch == 1) i += ii;
 		else i = ii;
 	}
-	animal(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p)
+	animal(String *s, int ID, int hitp, int xe, int ye, int xe_s, int ye_s, int p, int m_t)
 	{
+		timer_mating = 0;
+		mating_time = m_t;
 		hunger = 0;
 		base_move = 0.04;
-		radar = 3;
+		radar = 5;
 		++i;
 		id = ID;
 		hp = hitp;
